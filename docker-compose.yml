@@ -22,6 +22,7 @@ services:
       - flashcardsguru-db
     secrets:
       - pg_pass
+      - secret_key
 
   flashcardsguru-frontend:
     build:
