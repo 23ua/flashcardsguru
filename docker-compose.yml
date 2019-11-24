@@ -1,0 +1,60 @@
+version: '3.7'
+
+secrets:
+  pg_pass:
+    file: ./pg_pass
+  secret_key:
+    file: ./secret_key
+
+services:
+  flashcardsguru-backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    image: flashcardsguru-backend
+    restart: always
+    expose:
+      - 8000
+    environment:
+      PG_PASS_FILE: /run/secrets/pg_pass
+      SECRET_KEY_FILE: /run/secrets/secret_key
+    links:
+      - flashcardsguru-db
+    secrets:
+      - pg_pass
+
+  flashcardsguru-frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    image: flashcardsguru-frontend
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+      - flashcardsguru-backend
+    environment:
+      - TZ=${TZ}
+      - LETSENCRYPT=${LETSENCRYPT}
+      - LE_EMAIL=${LE_EMAIL}
+      - LE_FQDN=${LE_FQDN}
+    volumes:
+      - ./etc/ssl:/etc/nginx/ssl
+
+
+  flashcardsguru-db:
+    image: postgres:12
+    restart: always
+    environment:
+      POSTGRES_DB_PASSWORD_FILE: /run/secrets/pg_pass
+      POSTGRES_USER: flashcards
+      POSTGRES_DB: flashcardsguru
+    secrets:
+      - pg_pass
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+
