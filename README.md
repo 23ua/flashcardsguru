@@ -34,7 +34,7 @@ LE_EMAIL=email@exmple.com
 LE_FQDN=example.com
 ```
 You can set `LETSENCRYPT` to false if you don't need to generete certificates.
-Feor more info about certificates see https://github.com/umputun/nginx-le
+For more info about certificates see https://github.com/umputun/nginx-le
 
 6. Create and start containers:
 ```
